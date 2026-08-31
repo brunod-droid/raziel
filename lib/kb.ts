@@ -1,9 +1,33 @@
-import { Redis } from "@upstash/redis";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
-const redis = new Redis({
-  url: process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL || "",
-  token: process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN || "",
-});
+let _client: SupabaseClient | null = null;
+
+// Created lazily, on first real use, rather than at import time. This avoids
+// crashing the Next.js build (which imports this module to collect page
+// data) before SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY are configured.
+function getClient(): SupabaseClient {
+  if (_client) return _client;
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) {
+    throw new Error("SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are not configured");
+  }
+  _client = createClient(url, key, { auth: { persistSession: false } });
+  return _client;
+}
+
+const TABLE = "kv_store";
+
+async function kvGet<T>(key: string): Promise<T | null> {
+  const { data, error } = await getClient().from(TABLE).select("value").eq("key", key).maybeSingle();
+  if (error || !data) return null;
+  return data.value as T;
+}
+
+async function kvSet(key: string, value: unknown): Promise<void> {
+  const { error } = await getClient().from(TABLE).upsert({ key, value, updated_at: new Date().toISOString() });
+  if (error) throw new Error(`Supabase write failed: ${error.message}`);
+}
 
 export type PromoCode = {
   code: string;
@@ -111,20 +135,25 @@ function mergeWithDefaults(stored: Partial<KnowledgeBase> | null): KnowledgeBase
 }
 
 export async function getKnowledgeBase(): Promise<KnowledgeBase> {
-  const stored = await redis.get<KnowledgeBase>(KB_KEY);
-  return mergeWithDefaults(stored);
+  try {
+    const stored = await kvGet<KnowledgeBase>(KB_KEY);
+    return mergeWithDefaults(stored);
+  } catch (err) {
+    console.error("getKnowledgeBase: falling back to defaults,", err);
+    return DEFAULT_KB;
+  }
 }
 
 export async function saveKnowledgeBase(next: KnowledgeBase): Promise<KnowledgeBase> {
   const merged = mergeWithDefaults(next);
-  await redis.set(KB_KEY, merged);
+  await kvSet(KB_KEY, merged);
   return merged;
 }
 
 export async function saveScrapedFacts(update: KnowledgeBase["scrapedFacts"]): Promise<KnowledgeBase> {
   const current = await getKnowledgeBase();
   const next = { ...current, scrapedFacts: update };
-  await redis.set(KB_KEY, next);
+  await kvSet(KB_KEY, next);
   return next;
 }
 

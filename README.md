@@ -27,14 +27,22 @@ gh repo create theo-grace-console --private --source=. --push
    - `SESSION_SECRET`, any long random string
 3. Deploy.
 
-## 3. Attach a Redis database (the shared storage)
+## 3. Set up the shared knowledge base table in Supabase
 
-Vercel KV is being retired in favor of Redis from the Vercel Marketplace. In the Vercel
-dashboard, open your project, go to the Storage tab, "Create Database" or "Browse
-Marketplace", and add a Redis integration (Upstash is the usual provider). Connect it to
-this project. This automatically adds `KV_REST_API_URL` and `KV_REST_API_TOKEN` (or
-`UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN`, the code reads either) to your
-environment, no manual copy-pasting needed. Redeploy once after connecting it.
+You're using your existing Supabase project for this instead of adding a separate
+database.
+
+1. In your Supabase project, go to the SQL Editor, New query, paste the contents of
+   `supabase.sql` from this repo, and run it. This creates one small table, `kv_store`,
+   used to hold the shared knowledge base.
+2. In Supabase, go to Settings, API. Copy the **Project URL** and the **service_role**
+   secret key (not the anon/public one, the service_role key is what lets the server
+   read and write on behalf of the whole team, and it must never be exposed to the
+   browser, which is why it's only used in server-side API routes here).
+3. In Vercel, Project Settings, Environment Variables, add:
+   - `SUPABASE_URL`, the Project URL
+   - `SUPABASE_SERVICE_ROLE_KEY`, the service_role key
+4. Redeploy once after adding these.
 
 ## 4. The scraper, what it does and its limits
 
@@ -76,8 +84,6 @@ cp .env.example .env.local   # then fill in the values
 npm run dev
 ```
 
-Note: the shared knowledge base needs real Redis credentials to work, even locally, so
-connect the Redis integration in the Vercel dashboard first and pull the env vars with
-`vercel env pull .env.local`, or point `KV_REST_API_URL`/`KV_REST_API_TOKEN` (or the
-`UPSTASH_REDIS_REST_URL`/`UPSTASH_REDIS_REST_TOKEN` equivalents) at any Upstash Redis
-instance for local testing.
+Note: the shared knowledge base needs real Supabase credentials to work, even locally,
+so run `supabase.sql` in your Supabase project first (see step 3 above), then fill in
+`SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` in `.env.local`.
