@@ -44,32 +44,39 @@ database.
    - `SUPABASE_SERVICE_ROLE_KEY`, the service_role key
 4. Redeploy once after adding these.
 
-## 4. The scraper, what it does and its limits
+## 4. Set up Browserless (runs the headless browser for you)
 
-`/api/scrape` uses `puppeteer-core` with `@sparticuz/chromium` to load the site like a
-real browser, wait for it to finish rendering, then scan the page for anything that looks
-like a promo (a percentage off, the word "sale", or "code XXXX"). The result is saved to
-the knowledge base as `scrapedFacts.homepageBanner`, and the reply assistant is told to
-trust it over the hand typed promo codes if the two disagree.
+The scraper needs a real browser to see JS-rendered content, like an announcement bar
+that appears after the page loads. Running Chromium directly inside a Vercel function
+turned out to be unreliable (a well known "missing shared library" failure across many
+Vercel + Chromium projects, not specific to this app). Browserless runs the browser on
+its own infrastructure instead, and this app just connects to it.
 
-It's wired into `vercel.json` to run every 6 hours via Vercel Cron. Two things to know:
+1. Go to browserless.io, sign up for the free plan (1,000 units/month, no credit card
+   needed to start, one scan a day uses only a handful of units).
+2. Once signed up, copy your API token from their dashboard.
+3. In Vercel, Project Settings, Environment Variables, add `BROWSERLESS_API_KEY` with
+   that token.
+4. Redeploy.
 
-- **Vercel Cron minimum interval depends on your plan.** `vercel.json` is set to run
-  once a day (`"0 7 * * *"`, 7am UTC), which works on the free Hobby plan. If you
-  upgrade to Pro later, you can change it to something like `"0 */6 * * *"` for a scan
-  every 6 hours instead.
-- **The full `@sparticuz/chromium` package is used on purpose, not the smaller `-min`
-  variant.** The full package bundles the browser binary and its system libraries
-  (things like `libnss3.so`) inside the npm package itself, so there's nothing to
-  download at runtime and no version mismatch between a local package and a remote
-  file. It's a bigger install (roughly 70MB), but well within Vercel's function size
-  limit and much more reliable.
-- **The heuristic that finds the banner text is generic on purpose** (it looks for
-  patterns like "15% off" or "code XYZ" in short leaf elements), since it doesn't know
-  the site's exact CSS classes. Team leads can also hit "Refresh now" on the Knowledge
-  Base page to trigger it manually and sanity check what it finds before trusting it.
+## 5. What the scraper does and its limits
 
-## 5. Roles
+`/api/scrape` connects to Browserless, loads the site like a real browser, waits for it
+to finish rendering, then scans the page for anything that looks like a promo (a
+percentage off, the word "sale", or "code XXXX"). The result is saved to the knowledge
+base as `scrapedFacts.homepageBanner`, and the reply assistant is told to trust it over
+the hand typed promo codes if the two disagree.
+
+It's wired into `vercel.json` to run once a day via Vercel Cron (`"0 7 * * *"`, 7am UTC),
+which is the maximum frequency allowed on the free Hobby plan. If you upgrade to Pro
+later, you can change it to something like `"0 */6 * * *"` for a scan every 6 hours.
+
+The heuristic that finds the banner text is generic on purpose (it looks for patterns
+like "15% off" or "code XYZ" in short leaf elements), since it doesn't know the site's
+exact CSS classes. Team leads can hit "Refresh now" on the Knowledge Base page to trigger
+it manually and sanity check what it finds before trusting it.
+
+## 6. Roles
 
 Two passcodes, two access levels:
 - **Agent passcode**: can use the Reply Assistant.
@@ -80,7 +87,7 @@ This is intentionally simple (no user accounts, just two shared passcodes) to ge
 using it fast. If you later want individual logins or an audit trail of who changed what,
 that's a natural next step, ask and we can add it.
 
-## 6. Local development
+## 7. Local development
 
 ```
 npm install

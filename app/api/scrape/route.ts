@@ -7,18 +7,19 @@ export const dynamic = "force-dynamic";
 const TARGET_URL = process.env.SCRAPE_URL || "https://www.theograce.com";
 
 async function scrapeBanner(url: string): Promise<string> {
-  // Imported lazily so the rest of the app doesn't pay for this on every cold start.
-  // Using the full @sparticuz/chromium package (not the -min variant): it bundles
-  // the browser binary and its shared libraries (libnss3.so and friends) inside the
-  // npm package itself, rather than downloading a separate pack at runtime, which
-  // avoids version-mismatch failures like "libnss3.so: cannot open shared object file".
-  const chromium = (await import("@sparticuz/chromium")).default;
   const puppeteer = (await import("puppeteer-core")).default;
 
-  const browser = await puppeteer.launch({
-    args: chromium.args,
-    executablePath: await chromium.executablePath(),
-    headless: true,
+  const apiKey = process.env.BROWSERLESS_API_KEY;
+  if (!apiKey) {
+    throw new Error("BROWSERLESS_API_KEY is not configured");
+  }
+
+  // Connects to a browser running on Browserless's infrastructure instead of
+  // launching Chromium locally inside the Vercel function. This sidesteps the
+  // whole class of "missing shared library" failures that come from trying
+  // to run a full browser binary inside a serverless function.
+  const browser = await puppeteer.connect({
+    browserWSEndpoint: `wss://production-sfo.browserless.io?token=${apiKey}`,
   });
 
   try {
