@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getKnowledgeBase, saveKnowledgeBase, DEFAULT_KB } from "@/lib/kb";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const kb = await getKnowledgeBase();
   return NextResponse.json(kb);

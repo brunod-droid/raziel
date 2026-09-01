@@ -26,6 +26,9 @@ export async function middleware(req: NextRequest) {
   if (pathname.startsWith("/api/kb") && req.method !== "GET" && role !== "lead") {
     return NextResponse.json({ error: "Team lead access required" }, { status: 403 });
   }
+  if (pathname.startsWith("/api/coupons/manage") && role !== "lead") {
+    return NextResponse.json({ error: "Team lead access required" }, { status: 403 });
+  }
 
   return NextResponse.next();
 }

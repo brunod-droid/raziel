@@ -5,6 +5,18 @@ knowledge base lives in a real shared database, agents and team leads log in wit
 passcodes, and a scheduled job scans the live site with a headless browser so JS-rendered
 banners (like the Labor Day sale bar) are actually seen.
 
+**Multi-site**: the knowledge base has one shared "common" section (product facts and
+process rules that don't change) plus a separate entry per site (theo grace, MYKA, and
+any future storefront), each with its own voice, promo codes, extra facts, and live site
+check. Team leads manage all of this from the Knowledge Base page, including adding a
+brand new site with the "+ Add site" button, no code changes needed.
+
+**Single-use coupons**: separate from the reusable promo codes (WELCOME15 and friends),
+each site can also have a pool of unique one-time codes. A team lead pastes a batch of
+codes into the Knowledge Base page, and any agent can click "Claim a single-use code" in
+the Reply Assistant to get one that's guaranteed never handed out to two customers, it's
+marked used the instant it's claimed.
+
 ## 1. Push to GitHub
 
 ```
@@ -33,8 +45,10 @@ You're using your existing Supabase project for this instead of adding a separat
 database.
 
 1. In your Supabase project, go to the SQL Editor, New query, paste the contents of
-   `supabase.sql` from this repo, and run it. This creates one small table, `kv_store`,
-   used to hold the shared knowledge base.
+   `supabase.sql` from this repo, and run it. This creates the `kv_store` table (holds
+   the shared knowledge base) and the `coupon_pool` table plus a `claim_coupon` function
+   (handles the single-use coupon pool, safely even if two agents claim at the same
+   moment).
 2. In Supabase, go to Settings, API. Copy the **Project URL** and the **service_role**
    secret key (not the anon/public one, the service_role key is what lets the server
    read and write on behalf of the whole team, and it must never be exposed to the

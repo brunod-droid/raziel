@@ -10,13 +10,13 @@ function sanitizeReply(text: string): string {
 }
 
 export async function POST(req: NextRequest) {
-  const { message, notes, category } = await req.json();
+  const { message, notes, category, siteId } = await req.json();
   if (!message || !String(message).trim()) {
     return NextResponse.json({ error: "message is required" }, { status: 400 });
   }
 
   const kb = await getKnowledgeBase();
-  const system = buildSystemPrompt(kb, category);
+  const system = buildSystemPrompt(kb, siteId, category);
   const userContent = `CUSTOMER MESSAGE:\n${message}${notes && String(notes).trim() ? `\n\nAGENT CONTEXT / NOTES:\n${notes}` : ""}`;
 
   const apiKey = process.env.ANTHROPIC_API_KEY;

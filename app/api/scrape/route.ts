@@ -1,10 +1,8 @@
-import { NextResponse } from "next/server";
-import { saveScrapedFacts } from "@/lib/kb";
+import { NextRequest, NextResponse } from "next/server";
+import { getKnowledgeBase, saveScrapedFactsForSite } from "@/lib/kb";
 
 export const maxDuration = 60;
 export const dynamic = "force-dynamic";
-
-const TARGET_URL = process.env.SCRAPE_URL || "https://www.theograce.com";
 
 async function scrapeBanner(url: string): Promise<string> {
   const puppeteer = (await import("puppeteer-core")).default;
@@ -65,26 +63,39 @@ async function scrapeBanner(url: string): Promise<string> {
   }
 }
 
-async function runScrape() {
+async function runScrape(siteId?: string) {
   try {
-    const banner = await scrapeBanner(TARGET_URL);
-    const result = await saveScrapedFacts({
+    const kb = await getKnowledgeBase();
+    const site = kb.sites.find((s) => s.id === siteId) || kb.sites[0];
+    const url = `https://www.${site.domains[0]}`;
+    const banner = await scrapeBanner(url);
+    const result = await saveScrapedFactsForSite(site.id, {
       homepageBanner: banner,
       checkedAt: new Date().toISOString(),
-      source: TARGET_URL,
+      source: url,
     });
-    return { ok: true, banner, kb: result.scrapedFacts };
+    const updated = result.sites.find((s) => s.id === site.id);
+    return { ok: true, siteId: site.id, banner, scrapedFacts: updated?.scrapedFacts };
   } catch (err: any) {
     return { ok: false, error: err?.message || String(err) };
   }
 }
 
+// GET, no site specified, used by the daily Vercel Cron: scrapes every site
+// in the knowledge base in turn, one request per site.
 export async function GET() {
-  const result = await runScrape();
-  return NextResponse.json(result, { status: result.ok ? 200 : 500 });
+  const kb = await getKnowledgeBase();
+  const results = [];
+  for (const site of kb.sites) {
+    results.push(await runScrape(site.id));
+  }
+  const ok = results.every((r) => r.ok);
+  return NextResponse.json({ ok, results }, { status: ok ? 200 : 500 });
 }
 
-export async function POST() {
-  const result = await runScrape();
+// POST { siteId }, used by the manual "Refresh now" button for a single site.
+export async function POST(req: NextRequest) {
+  const body = await req.json().catch(() => ({}));
+  const result = await runScrape(body.siteId);
   return NextResponse.json(result, { status: result.ok ? 200 : 500 });
 }
