@@ -5,19 +5,19 @@ export const maxDuration = 60;
 export const dynamic = "force-dynamic";
 
 const TARGET_URL = process.env.SCRAPE_URL || "https://www.theograce.com";
-// Pin a specific @sparticuz/chromium release so the remote binary matches the
-// npm package version above. Update both together if you bump the dependency.
-const CHROMIUM_PACK_URL =
-  "https://github.com/Sparticuz/chromium/releases/download/v123.0.1/chromium-v123.0.1-pack.tar";
 
 async function scrapeBanner(url: string): Promise<string> {
   // Imported lazily so the rest of the app doesn't pay for this on every cold start.
-  const chromium = (await import("@sparticuz/chromium-min")).default;
+  // Using the full @sparticuz/chromium package (not the -min variant): it bundles
+  // the browser binary and its shared libraries (libnss3.so and friends) inside the
+  // npm package itself, rather than downloading a separate pack at runtime, which
+  // avoids version-mismatch failures like "libnss3.so: cannot open shared object file".
+  const chromium = (await import("@sparticuz/chromium")).default;
   const puppeteer = (await import("puppeteer-core")).default;
 
   const browser = await puppeteer.launch({
     args: chromium.args,
-    executablePath: await chromium.executablePath(CHROMIUM_PACK_URL),
+    executablePath: await chromium.executablePath(),
     headless: true,
   });
 

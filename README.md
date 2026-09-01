@@ -46,7 +46,7 @@ database.
 
 ## 4. The scraper, what it does and its limits
 
-`/api/scrape` uses `puppeteer-core` with `@sparticuz/chromium-min` to load the site like a
+`/api/scrape` uses `puppeteer-core` with `@sparticuz/chromium` to load the site like a
 real browser, wait for it to finish rendering, then scan the page for anything that looks
 like a promo (a percentage off, the word "sale", or "code XXXX"). The result is saved to
 the knowledge base as `scrapedFacts.homepageBanner`, and the reply assistant is told to
@@ -54,12 +54,16 @@ trust it over the hand typed promo codes if the two disagree.
 
 It's wired into `vercel.json` to run every 6 hours via Vercel Cron. Two things to know:
 
-- **Vercel Cron minimum interval depends on your plan.** The Hobby plan only allows
-  daily crons. If you're on Hobby, change the schedule in `vercel.json` to `"0 6 * * *"`
-  (once a day) or upgrade to Pro for more frequent runs.
-- **The chromium binary version must match the npm package version.** `package.json`
-  pins `@sparticuz/chromium-min` and `app/api/scrape/route.ts` points to a matching
-  release URL. If you bump one, bump the other, see the comment in that file.
+- **Vercel Cron minimum interval depends on your plan.** `vercel.json` is set to run
+  once a day (`"0 7 * * *"`, 7am UTC), which works on the free Hobby plan. If you
+  upgrade to Pro later, you can change it to something like `"0 */6 * * *"` for a scan
+  every 6 hours instead.
+- **The full `@sparticuz/chromium` package is used on purpose, not the smaller `-min`
+  variant.** The full package bundles the browser binary and its system libraries
+  (things like `libnss3.so`) inside the npm package itself, so there's nothing to
+  download at runtime and no version mismatch between a local package and a remote
+  file. It's a bigger install (roughly 70MB), but well within Vercel's function size
+  limit and much more reliable.
 - **The heuristic that finds the banner text is generic on purpose** (it looks for
   patterns like "15% off" or "code XYZ" in short leaf elements), since it doesn't know
   the site's exact CSS classes. Team leads can also hit "Refresh now" on the Knowledge
