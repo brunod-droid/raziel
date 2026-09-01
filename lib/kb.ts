@@ -87,7 +87,7 @@ export const DEFAULT_KB: KnowledgeBase = {
   },
   promoCodes: [
     { code: "WELCOME15", discount: "15% off first order", condition: "New subscribers, part of Subscribe and Save, confirmed in real order history, evergreen small print link in the top bar", expiry: "Ongoing" },
-    { code: "LDAY15", discount: "15% off sitewide", condition: "Current live sale banner, applies to all customers not just new ones", expiry: "Time limited, check the scraped homepage banner below for the current live code" },
+    { code: "LDAY15", discount: "Extra 15% off sitewide", condition: "Current live sale banner: \"Labor Day Sale, Extra 15% Off with Code LDAY15\", confirmed on site, applies to all customers not just new ones", expiry: "Time limited, check the scraped homepage banner below for the current live code" },
     { code: "TG CIRCLE", discount: "Rewards points toward a future piece", condition: "Enrollment in the TG Circle loyalty program, any customer", expiry: "Ongoing" },
     { code: "GRACENOTE", discount: "15% off the next piece", condition: "Service recovery only, used for a damaged piece or a meaningful delay", expiry: "Single use, valid 30 days" },
     { code: "HILTONFAVES", discount: "No discount, a styling nudge", condition: "Point toward Nicky Hilton's Favorites or her named collections when a gift occasion or personal style question comes up", expiry: "Ongoing" },

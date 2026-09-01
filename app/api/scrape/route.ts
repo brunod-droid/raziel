@@ -49,7 +49,17 @@ async function scrapeBanner(url: string): Promise<string> {
       return Array.from(new Set(found)).slice(0, 8);
     });
 
-    return candidates.length > 0 ? candidates.join(" | ") : "No promo banner text detected on this pass.";
+    if (candidates.length === 0) {
+      return "No promo banner text detected on this pass.";
+    }
+    // Prefer the fragment that actually names a usable code, that's the one
+    // an agent needs, over generic teasers like "SALE" or "Sign up & Save".
+    const withCode = candidates.filter((c) => /code\s*:?\s*[a-z0-9]{3,}/i.test(c));
+    const pool = withCode.length > 0 ? withCode : candidates;
+    // Among the useful candidates, the longest one is usually the full banner
+    // sentence rather than a short repeated nav fragment.
+    const best = pool.reduce((a, b) => (b.length > a.length ? b : a));
+    return best;
   } finally {
     await browser.close();
   }
