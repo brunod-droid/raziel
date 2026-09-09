@@ -97,11 +97,13 @@ export const DEFAULT_KB: KnowledgeBase = {
       "Each personalized piece has a maximum number of beads, charms or characters it can hold, tied to its design. Before promising an addition, check the specific product's stated limit rather than assuming any amount can be added.",
       "Adding a bead, charm or similar addition to an already ordered piece is typically sent to the production team for approval, the customer is notified once it is processed, usually within 24 to 48 hours.",
       "Chains are also sold as a standalone piece under Cable Chain Necklace, available in sterling silver, gold vermeil and solid gold, in several lengths. This is what to search the catalog for when a customer needs a longer or replacement chain for a piece they already own.",
+      "A theo grace family product page (PDP) is laid out the same way across products: a price block (list price, sale price if discounted, review count), then selectors for material or metal (each metal option has its own SKU and its own product URL), diamond size where applicable, number of beads or characters, inscriptions or names, a Show Preview button, a size selector, and a running subtotal, followed by an Add to Bag button. Below that sit four tabs: Description and Materials (the product story and styling suggestions, sometimes with a link to buy matching add-ons separately, such as extra beads), Instructions (sustainability, care, and warranty links), Product Details (a structured spec list: SKU or ID, Main Material, Chain Type, Chain Length, Pendant Measurements, Hypoallergenic), and Shipping and Returns (estimated delivery windows). The first three tabs are present in the page's base content, but Shipping and Returns loads separately and is not reliably visible on a simple fetch.",
+      "Example of a real product's spec block, the Charming Heart Necklace with Engraved Beads (gold plating, SKU 110-01-3206-89): Cable Chain, adjustable chain length, heart pendant 1.122 inches by 1.122 inches, nickel-free, holds up to 5 customizable beads for 1 to 5 names or words. Customers who already own this piece and want more beads should be pointed to its dedicated replacement beads product rather than told to reorder the whole necklace.",
     ],
     rules: [
       { category: "Presale, product or customization question", rule: "Answer the material, sizing, engraving or customization question precisely, this is the largest single category of presale messages. If something isn't possible, such as a stone color swap, say so honestly and offer two or three alternative pieces that do fit what they wanted. If the customer wants no engraving at all rather than blank text, tell them to enter three dashes as a placeholder in the engraving field, then reply to their confirmation email to confirm no engraving, real agents use this exact workaround." },
       { category: "Presale, adding a bead or charm", rule: "Confirm the addition is possible and link to the matching bead or charm product for that specific piece. Every piece has a maximum number of beads or characters, mention it if the customer's request is near or over that limit. If they are adding to an order already placed, tell them it goes to the production team for approval, with a notification usually within 24 to 48 hours." },
-      { category: "Presale, coupon or promo code", rule: "If a coupon was meant for an order that has already been processed, explain kindly that it cannot be applied retroactively, but it can be used on their next order while it remains valid. For a first time shopper without a code, use this site's evergreen welcome code, or the current live sitewide sale code if one is active. If a customer reports a coupon or newsletter discount not working, ask for a screenshot of the code and the error before troubleshooting further." },
+      { category: "Presale, coupon or promo code", rule: "If a coupon was meant for an order that has already been processed, explain kindly that it cannot be applied retroactively, but it can be used on their next order while it remains valid. For a first time shopper without a code, use this site's evergreen welcome code, or the current live sitewide sale code if one is active. When a customer says their coupon or welcome code is not working, the single most common cause, confirmed repeatedly in real tickets, is that they entered it in the Store Credit field instead of the Promotional Code or Coupon Code field, ask about that first before assuming the code itself is broken. If that isn't it, ask for a screenshot of the code and the error before troubleshooting further." },
       { category: "Presale, sizing", rule: "Resizing is free but limited to the sizes already listed on that specific product page, never promise a size beyond what is listed. If the customer needs something larger or smaller than what is offered, suggest a similar style with a wider size range." },
       { category: "Presale, store credit", rule: "Store credit is applied in the separate Store Credit field at checkout, not the Coupon Code field, mention this clearly since it is a common point of confusion. State the store credit amount and how to apply it." },
       { category: "Presale, ETA or shipping before ordering", rule: "Each piece is handcrafted to order, so delivery time depends on the item and the shipping method chosen at checkout, the estimated delivery date shown there is the most accurate answer. If asked for an express shipping cost and you have it, state it plainly rather than sending the customer to look it up." },
@@ -117,16 +119,17 @@ export const DEFAULT_KB: KnowledgeBase = {
     {
       id: "theograce",
       name: "theo grace",
-      domains: ["theograce.com", "theograce.co.uk"],
+      domains: ["theograce.com", "theograce.co.uk", "theograce.de"],
       voice:
         "Elegant, warm, refined, emotional and family oriented. theo grace is a premium personalized jewelry house, the original personalized jewelry brand since 2006, previously known as MYKA. It connects personalization to family joy, gifting and meaningful relationships. Nicky Hilton curates several signature collections for the brand (Made to Treasure, Take a Bow, Charmed, and her personal Favorites) and is part of the brand story, so she can be named naturally when a collection or gifting recommendation calls for it, but never in a damaged item or delivery complaint reply.",
       facts: [
         "The Heritage Multiple Name Necklace with Diamonds already offers a 2 Names plus 1 Diamond configuration in its own product options, where the diamond sits between the two names by design. A request for two words placed closer together with a diamond separating them is exactly what this configuration already does, this is not a special customization, it is a standard selectable option on the product page.",
         "For the Russian Rings Necklace, a ring cannot be added to an already purchased piece, the customer needs to purchase a new necklace to get more rings. The compensation approach differs depending on whether the customer bought the Future Engraving option on their original order, the exact process for each case is pending confirmation from the team lead, see the related process rule.",
         "theo grace was previously known as MYKA. For customers in Ireland, the site is still MYKA.com under the MYKA name, that is a separate site entry in this tool, not an error to correct.",
+        "theograce.de is going live around mid-September 2026 for German customers, replacing myka.de. Once live, German customers should be pointed to theograce.de and the theo grace name rather than MYKA.",
       ],
       promoCodes: [
-        { code: "WELCOME15", discount: "15% off first order", condition: "New subscribers, part of Subscribe and Save, confirmed in real order history, evergreen small print link in the top bar", expiry: "Ongoing" },
+        { code: "WELCOME15 + unique suffix", discount: "15% off first order", condition: "This is not one fixed code. Each subscriber receives their own personalized code that starts with WELCOME15 followed by a random suffix, for example WELCOME15C9GIWX8H3. Never tell a customer to type the literal word WELCOME15, it must be their own code from their welcome email. If they can't find it, ask them to check the email they got right after subscribing, or resend it if your tools allow that.", expiry: "Ongoing, single use per subscriber" },
         { code: "LDAY15", discount: "Extra 15% off sitewide", condition: "Current live sale banner: Labor Day Sale, Extra 15% Off with Code LDAY15, applies to all customers not just new ones", expiry: "Time limited, check the scraped homepage banner below for the current live code" },
         { code: "TG CIRCLE", discount: "Rewards points toward a future piece", condition: "Enrollment in the TG Circle loyalty program, any customer", expiry: "Ongoing" },
         { code: "GRACENOTE", discount: "15% off the next piece", condition: "Service recovery only, used for a damaged piece or a meaningful delay", expiry: "Single use, valid 30 days" },
@@ -140,12 +143,79 @@ export const DEFAULT_KB: KnowledgeBase = {
     {
       id: "myka",
       name: "MYKA",
-      domains: ["myka.com"],
+      domains: ["myka.com", "myka.fr", "myka.de", "myka.se"],
       voice:
         "Elegant, warm, refined, emotional and family oriented, the same house as theo grace under its original name. MYKA is the brand name still used for Irish customers, it is not a rename in progress and not a mistake, it is simply this market's storefront. Connects personalization to family joy, gifting and meaningful relationships.",
       facts: [
         "MYKA is the original name of the same company now known as theo grace elsewhere. Do not explain this as an old or discontinued name to an Irish customer, MYKA.com is their correct, current site.",
+        "MYKA also serves France, Germany, and Sweden as separate country domains. The exact domain spellings (myka.fr, myka.de, myka.se) are unverified placeholders, a team lead should confirm and correct these.",
+        "theograce.de is going live around mid-September 2026 and will replace myka.de as the German site. Until that switch is confirmed complete by a team lead, myka.de remains the live German site under the MYKA name, do not tell a German customer to use theograce.de before the transition has actually happened.",
       ],
+      promoCodes: [],
+      rules: [],
+      scrapedFacts: { ...EMPTY_SCRAPED },
+    },
+    {
+      id: "oakandluna",
+      name: "Oak & Luna",
+      domains: ["oakandluna.com"],
+      voice:
+        "Warm and personal, similar spirit to theo grace: personalization, gifting, meaningful relationships. Refine this further, this voice description is a starting point pulled from limited context, a team lead should adjust it.",
+      facts: [
+        "This site also runs a WELCOME15 style personalized code, each subscriber gets their own code starting with WELCOME15 followed by a random suffix, not a single shared code.",
+        "Best sellers are listed on a dedicated collection page, for example oakandluna.com/categories/best-sellers, rather than marked with a badge on every individual product page. Point customers there for popular picks.",
+        "Promotions are sometimes run as social media or SMS contests with their own one-off code (for example a code shared in an Instagram caption or a text message), separate from the site's regular promo codes, ask the customer where they got the code if it's unfamiliar.",
+      ],
+      promoCodes: [],
+      rules: [],
+      scrapedFacts: { ...EMPTY_SCRAPED },
+    },
+    {
+      id: "limeandlou",
+      name: "Lime & Lou",
+      domains: ["limeandlou.com"],
+      voice:
+        "Not yet documented, this is a different product line (custom canvas art rather than jewelry), a team lead should write a proper voice description and should not assume the jewelry-specific facts above (engraving, resizing, chain length) apply here.",
+      facts: [
+        "Sells personalized canvas art (for example a \"Portrait to Palette\" custom canvas), not jewelry. Do not apply jewelry specific facts (engraving, ring resizing, chain length) to this site.",
+      ],
+      promoCodes: [],
+      rules: [],
+      scrapedFacts: { ...EMPTY_SCRAPED },
+    },
+    {
+      id: "israelblessing",
+      name: "Israel Blessing",
+      domains: ["israelblessing.com"],
+      voice:
+        "Warm, faith centered, reverent rather than purely fashion focused. Israel Blessing is an Israeli company based in Nazareth, designing jewelry inspired by biblical and Christian tradition, meant to feel meaningful to churches and congregations, not just individual shoppers. Different register from theo grace's family-gifting tone, lean into faith, blessing, and heritage language here instead.",
+      facts: [
+        "Products are inspired by scripture and Christian tradition, for example the Nazareth Blessing Collection, sometimes referencing specific Bible verses (Psalms, Matthew 28:19-20 have come up as examples). Product descriptions may be longer and more devotional than a typical jewelry listing.",
+        "A known competitor mentioned internally is Shields of Strength, useful context if a customer compares the two.",
+      ],
+      promoCodes: [],
+      rules: [],
+      scrapedFacts: { ...EMPTY_SCRAPED },
+    },
+    {
+      id: "mynamenecklace",
+      name: "My Name Necklace",
+      domains: ["mynamenecklace.com", "mynamenecklace.co.il"],
+      voice:
+        "Not yet documented in detail, same general personalized jewelry category as theo grace and MYKA, a team lead should write a proper voice description rather than assuming it's identical to theo grace's tone.",
+      facts: [
+        "Also sells personalized name jewelry (name necklaces, name rings), similar category to theo grace and MYKA, but confirm before assuming a specific policy (returns, resizing, engraving) is identical, since each brand can differ.",
+      ],
+      promoCodes: [],
+      rules: [],
+      scrapedFacts: { ...EMPTY_SCRAPED },
+    },
+    {
+      id: "sett",
+      name: "SETT",
+      domains: [],
+      voice: "Not yet documented, a team lead should fill in the voice, domain, facts, and promo codes for this site.",
+      facts: [],
       promoCodes: [],
       rules: [],
       scrapedFacts: { ...EMPTY_SCRAPED },
