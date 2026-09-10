@@ -113,6 +113,13 @@ export const DEFAULT_KB: KnowledgeBase = {
       { category: "Order status, delayed or upset", rule: "Open with a genuine apology, especially if the piece was meant for a holiday moment. Give one clear next step. Offer this site's service recovery code. Mention the care team is personally handling it. Keep it sincere, not transactional." },
       { category: "Damaged or defective", rule: "Lead entirely with empathy, this may be a gift for someone they love. No selling language. Walk through the 100 day return and replacement path clearly, note the 2 year warranty for peace of mind, and offer this site's service recovery code as a gesture, not a trade." },
       { category: "General support", rule: "Solve the sizing, engraving or resizing question fully first. For a chain length or replacement question, point to the standalone Cable Chain Necklace, available in the same metal as the customer's piece, rather than asking the customer to describe technical chain details. Only after the question is resolved, a single soft mention of the loyalty program or a related collection is appropriate, one sentence, never more." },
+      { category: "Real customer photos", rule: "If a customer asks for real customer photos rather than product page images, offer to share authentic customer photos when available, to help them judge size, appearance, and detail. Real customer images are known to be more persuasive than standard product photos during a presale conversation, so proactively offering this can help move a hesitant shopper forward." },
+      { category: "Product materials, sizing, or availability question", rule: "For general questions about what a product is made of, how to pick the right size, or whether an item is currently available, point to the product's specification section or product page as the source of truth, and offer to help further if they share specifics (measurements, recipient details, or the exact variant they're asking about) rather than guessing." },
+      { category: "Delivery date estimate", rule: "This question is conversion critical, handle it carefully rather than deflecting. Ask for the customer's destination country and the date they need the item by, then use that to work out whether an available shipping option meets their deadline before answering." },
+      { category: "Returns policy or warranty question", rule: "Return eligibility and warranty coverage both depend on the specific item and the applicable brand's policy, don't state a specific timeframe unless it's confirmed for that brand and item in this knowledge base. Point to the official policy for the details, and only escalate to a human for exception requests outside the standard policy." },
+      { category: "Jewelry care", rule: "Recommend following the care instructions provided with the product to help it keep its appearance and durability over time. Link to the brand's jewelry care guide if one is listed in this knowledge base." },
+      { category: "Hesitant, gift, or emotional purchase", rule: "When a customer hesitates, is buying a gift, or the purchase is tied to an emotional or memorial occasion, add a warm reassurance that a real person is available throughout their purchasing journey and happy to help personally. This is about building trust, not closing a sale, keep it sincere rather than salesy." },
+      { category: "Quality or pricing objection", rule: "If a customer questions quality or pushes back on price, reassure them that each piece is made to order and carefully reviewed before shipment to meet quality standards. This justifies the pricing without sounding defensive." },
     ],
   },
   sites: [
@@ -194,7 +201,13 @@ export const DEFAULT_KB: KnowledgeBase = {
         "A known competitor mentioned internally is Shields of Strength, useful context if a customer compares the two.",
       ],
       promoCodes: [],
-      rules: [],
+      rules: [
+        { category: "Hebrew translation", rule: "Very high frequency question, a high conversion blocker if answered poorly, so get this right. A customer can enter a name in English at checkout, the team translates it into Hebrew, and the Hebrew version appears in the order confirmation email for the customer to verify before production begins. Approved response to use as the basis for the reply: you are welcome to enter the name in English when placing your order, our team will translate it into Hebrew and the Hebrew version will appear in your order confirmation email, allowing you to verify it before production begins." },
+        { category: "Hebrew spelling verification", rule: "If a customer asks to check Hebrew spelling before ordering, confirm this is possible: if they provide the name they want engraved, the team can confirm the Hebrew spelling before they place the order." },
+        { category: "Combination of symbols", rule: "There is no fully custom jewelry design service. If a customer wants a specific combination of symbols, explain that there isn't a fully custom option, but several existing products allow multiple symbols within their design, and offer to recommend the closest available option, this is a sales opportunity to redirect rather than a dead end." },
+        { category: "Made in Israel / shipping origin", rule: "All jewelry is handcrafted and shipped directly from Israel. Orders ship from Israel, and available shipping methods and estimated delivery times for the customer's destination appear at checkout." },
+        { category: "Coupon application", rule: "To use a coupon: add items to the cart, enter the code in the promotion box at checkout, and click Apply. Only one coupon can be used per order." },
+      ],
       scrapedFacts: { ...EMPTY_SCRAPED },
     },
     {
