@@ -1,0 +1,122 @@
+[
+  {
+    "topic": "Warranty start date and length",
+    "target": "common",
+    "proposed_fact": "The 2 year (24 month) warranty is counted from the ETA.",
+    "sources_say": "Hub damaged policy: 2 years from the ETA. Item Received policy export: descriptions say 'under 24 months since the ETA', but the out of warranty instructions say 'starting from the date of delivery' (more than 730 days / 1095 days since delivery). Add-on warranty pack macros: 2 years from the purchase date. Scratches rule: 21 days from the ETA. A marketplace macro (Ali-Express) says '1-year warranty to all jewelry pieces'.",
+    "reason": "Four different starting points (ETA, delivery date, purchase date) and two different lengths (2 years, 1 year) appear across the sources. This decides whether a claim is in or out of warranty.",
+    "conflicting_with": "Out of warranty rule: 25 to 36 months from the ETA gets 20% off, 36+ months full price."
+  },
+  {
+    "topic": "Solid gold purities offered",
+    "target": "common",
+    "proposed_fact": "Solid gold is offered in 10K, 14K and 18K (confirm per brand), gold plated and vermeil are 18K gold.",
+    "sources_say": "Materials FAQ: solid gold 10k, 14k and 18k. Approved vermeil answer from real tickets: solid gold 10K and 14K, gold plated and vermeil 18K. Premium definition in the Damaged policy: 10K, 14K or 18K solid gold. Marketplace macro: solid gold 10k or 14k. Care macro: solid gold purity 9k, 10k and 14k.",
+    "reason": "The knowledge base itself contains two contradicting statements (one lists 18K solid gold, the other says solid gold is only 10K and 14K), and two macros give other lists. A customer asking about purity gets different answers.",
+    "conflicting_with": "Common facts: 'solid gold in 10k, 14k, and 18k' versus 'solid gold pieces are offered in 10K and 14K'."
+  },
+  {
+    "topic": "Water resistance, all pieces or only badged ones",
+    "target": "common",
+    "proposed_fact": "Water resistance can only be confirmed for products showing the Water Resistant badge (theo grace), otherwise give the general care guidance and avoid promising.",
+    "sources_say": "Water macro: 'All of our jewelry pieces are water resistant', remove silver, gold plated and vermeil in the shower because soapy water dulls them. Newer theo grace instruction: only products with the blue Water Resistant badge can be called water resistant, others follow the regular policy.",
+    "reason": "The macro states all pieces are water resistant, the new badge implies it is a per-product feature. The macro may predate the badge.",
+    "conflicting_with": "Common fact: jewelry is water resistant, not waterproof."
+  },
+  {
+    "topic": "Compensation on damaged items (coupon and exchange credit)",
+    "target": "common",
+    "proposed_fact": "For a damaged item, follow the current policy: reorder, then exchange, then store credit, refund only on request. The 30% coupon and the extra $20 credit in the older macros are not offered unless a team lead confirms.",
+    "sources_say": "Hub damaged policy and the Item Received export: reorder, exchange (customer pays or receives store credit for the price difference), store credit, refund only within 30 days. No coupon is mentioned. Macros (Arrived_Damaged, Damaged_Silver, Gold_Warranty, Silver_Warranty, Reorder_Before_Oct): a 30% coupon valid 6 months and 'pick any other piece with an extra $20 credit on us'.",
+    "reason": "The macros add gestures (30% coupon, $20 credit) that the current policies never mention. Unclear whether they are still given.",
+    "conflicting_with": "Damaged rules in the knowledge base (marked as legacy macro extras to confirm)."
+  },
+  {
+    "topic": "Not Satisfied, extra options (10% refund, 30% coupon)",
+    "target": "common",
+    "proposed_fact": "Not Satisfied options are exchange first, then store credit (full amount, valid 1 year), and a refund only for non-personalized or stock items within 30 days. The 10% refund and 30% coupon are not offered unless confirmed.",
+    "sources_say": "Hub Not Satisfied policy: exchange, then store credit, refund for stock items within 30 days. Macros 10%_Refund_NS and NS_Coupon: a 10% refund of the order or a 30% coupon (valid 6 months) as options where the customer keeps the item.",
+    "reason": "Two gestures exist only in macros and may be retired.",
+    "conflicting_with": "Not Satisfied rule in the knowledge base."
+  },
+  {
+    "topic": "Late compensation, when it starts and what is offered",
+    "target": "common",
+    "proposed_fact": "Late compensation is offered from the day after the ETA, the customer chooses from the late compensation options page.",
+    "sources_say": "Late sub-policy document: offer late compensation when the customer asks a day after the promised date. Late_After_3_days macro: only send when more than 3 business days past the ETA. Amounts in macros: $15 gift card, 20% coupon, 30% coupon, shipping fee refund, 15% refund for USPS/Mailog almost lost cases. The actual options on the late compensation page are not documented anywhere.",
+    "reason": "Two different starting points (1 day versus 3 business days) and no definitive list of what the customer can choose.",
+    "conflicting_with": "Earlier knowledge base wording: no compensation for a delay under 3 business days."
+  },
+  {
+    "topic": "Compensation before the ETA is missed",
+    "target": "common",
+    "proposed_fact": "The automatic 20% coupon inside proactive 'might be late' messages is the only compensation given before the ETA has passed.",
+    "sources_say": "WISMO policy: don't offer compensation before the ETA has passed. Proactive macros (ETA-1 might be late, courier late 1 to 3 business days, will not arrive on time, late supplier) include a 20% coupon before the ETA is missed.",
+    "reason": "The proactive flow compensates before the ETA, which looks like an exception to the general rule.",
+    "conflicting_with": "WISMO on time rule: no compensation before the ETA."
+  },
+  {
+    "topic": "DNR, whether a refund can be offered",
+    "target": "common",
+    "proposed_fact": "DNR ladder: reorder, then store credit, then (after asking once more about other options) a refund. Lime & Lou never offers a refund in the 'other' case.",
+    "sources_say": "Hub WISMO page: the customer may choose a free reorder or a full refund. DNR sub-policy: reorder, store credit, ask again, then refund. Lime & Lou DNR: only reorder or store credit, 'DO NOT OFFER A REFUND'.",
+    "reason": "The hub page presents reorder and refund as equal choices, the sub-policies make refund the last resort, and Lime & Lou forbids it.",
+    "conflicting_with": "DNR rule in the knowledge base."
+  },
+  {
+    "topic": "Over 100 days, which date counts and what is offered",
+    "target": "common",
+    "proposed_fact": "Beyond 100 days, offer a free reorder (same item or same price range), and if refused, a 70% refund approved by billing.",
+    "sources_say": "Hub: reorders and refunds only within 100 days after the ETA. Sub-policy: 'Over 100 Days Since Delivery ETA' solution exists but its content isn't described. Macros Lost_Over_100: 'more than 100 days after the date of purchase', free reorder first, then a 70% refund.",
+    "reason": "The 100 days is counted from the ETA in the policies and from the purchase date in the macro, and the dedicated solution's content is only visible in the macro.",
+    "conflicting_with": "Lost order and over 100 days rules in the knowledge base."
+  },
+  {
+    "topic": "Adding an engraving or charm after purchase",
+    "target": "common",
+    "proposed_fact": "Without Future Engraving or the add-on pack, a post-purchase addition isn't possible, the courtesy is a 30% coupon for a new item with team lead approval.",
+    "sources_say": "Pre-Sale macro Add_Engraving: a unique 20% code from the coupon bank for a new order. FUTURE_ENGRAVING macro: not possible, 30% coupon via the team lead (non-premium, 6 months). Policy documents: the full repurchase cases (Russian Rings, Heritage Multiple Name, Totem 3D Bar) get a 30% code. Add-on warranty pack macros: gold and diamond items can buy a $40 pack for up to 2 additions within 2 years.",
+    "reason": "20% versus 30% for the same situation, and it isn't clear whether the add-on pack (Future Engraving) can be purchased after the original order.",
+    "conflicting_with": "Common fact on post-purchase additions and the theo grace Future Engraving facts."
+  },
+  {
+    "topic": "Manufacturing issue, misspelling versus customer mistake",
+    "target": "common",
+    "proposed_fact": "A misspelling made in our production is reordered free, a customer's own mistake is reordered with a 30% restocking fee (often waived for a typo with approval).",
+    "sources_say": "Item Received export: 'if the customer has in his order a misspelling mistake, we can reorder with no charge', 'if this customer mistake, reorder with a 30% restocking fee'. Macro: any change when the jewelry was made as the customer specified is subject to a 30% restocking fee, typically waived.",
+    "reason": "The source doesn't say whose misspelling gets the free reorder, and the waiver depends on approval.",
+    "conflicting_with": "Manufacturing issue rule in the knowledge base."
+  },
+  {
+    "topic": "DHL customs fees charged to the customer",
+    "target": "common",
+    "proposed_fact": "If a customer reports a DHL customs fee, apologize, ask for proof of payment and refund it.",
+    "sources_say": "New customs delay messages tell the customer there is no customs fee on their end. DHL_Letter macro: customers have been charged customs fees by DHL, the team refunds them on proof of payment within 14 days and sends a DHL letter.",
+    "reason": "Needs confirmation that this refund still applies and who processes it.",
+    "conflicting_with": "Overseas customs delay rule: 'no customs or paperwork fees on your end'."
+  },
+  {
+    "topic": "Returned to sender with a wrong address on Mailog Express, Landmark or Global Post",
+    "target": "common",
+    "proposed_fact": "Ask the agent: for these couriers with a wrong address there is no reship, the customer may place a new order.",
+    "sources_say": "RTS sub-policy: wrong address with Mailog Express, Landmark or Global Post: 'RTS- No Reship- Wrong Address'. What the customer is offered instead isn't described.",
+    "reason": "The outcome is missing from the source.",
+    "conflicting_with": "RTS rule in the knowledge base."
+  },
+  {
+    "topic": "Solutions whose content isn't documented",
+    "target": "common",
+    "proposed_fact": "Document these solutions: 'Over 100 Days Since Delivery ETA', '@DHL ROYAL HU', 'Refund for damaged twice more than 6 months', the late compensation options page, and the Resize solutions per brand (theo grace US, theo grace UK, Oak & Luna).",
+    "sources_say": "The sub-policies name these solutions but don't describe what is offered.",
+    "reason": "The knowledge base can only say these exist.",
+    "conflicting_with": "None, missing information."
+  },
+  {
+    "topic": "Premium and non-premium exchange when the item is damaged",
+    "target": "common",
+    "proposed_fact": "For a damaged item, exchange the customer pays or receives store credit for the price difference, the extra $20 credit applies to Not Satisfied exchanges of gold items.",
+    "sources_say": "Hub damaged policy: exchange, customer pays or receives store credit for the price difference. Macros Arrived_Damaged, OOS_Offer: pick any other piece with an extra $20 credit on us. Hub Not Satisfied: premium exchange covers up to $20 price difference.",
+    "reason": "The $20 amount appears in both damaged and not satisfied macros but only in the Not Satisfied policy.",
+    "conflicting_with": "Damaged rules in the knowledge base."
+  }
+]

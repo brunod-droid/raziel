@@ -1,5 +1,7 @@
 import ExcelJS from "exceljs";
 import { KnowledgeBase, getAssistantBehaviorSections } from "@/lib/kb";
+import macroLibrary from "@/data/macroLibrary.json";
+import flaggedItems from "@/data/toValidate.json";
 
 export type PendingItem = {
   target: string;
@@ -37,11 +39,13 @@ function addSheet(wb: ExcelJS.Workbook, name: string, headers: string[], rows: (
 export function buildJson(kb: KnowledgeBase, pending: PendingItem[]) {
   return {
     exportedAt: new Date().toISOString(),
-    note: "Live export of the Raziel knowledge base, including anything added inside the app. Items in pendingValidation are not yet part of the knowledge base.",
+    note: "Live export of the Raziel knowledge base, including anything added inside the app. pendingValidation holds items waiting in the To Validate queue, flaggedForValidation lists conflicts and gaps found when reconciling the source documents, macroLibrary holds the approved message templates (live promo codes and customer names removed). None of these three are part of the knowledge base itself.",
     common: kb.common,
     sites: kb.sites,
     assistantBehaviorRules: getAssistantBehaviorSections(kb),
     pendingValidation: pending,
+    flaggedForValidation: flaggedItems,
+    macroLibrary,
   };
 }
 
@@ -65,7 +69,9 @@ export async function buildWorkbook(kb: KnowledgeBase, pending: PendingItem[]): 
     [`Site Facts: ${nSiteFacts}`, false],
     [`Site Promo Codes: ${nPromos}`, false],
     [`Site Rules: ${nSiteRules}`, false],
-    [`Pending Validation: ${pending.length} items waiting for a decision, not yet part of the knowledge base`, false],
+    [`Pending Validation: ${pending.length} items waiting for a decision in the To Validate queue, not yet part of the knowledge base`, false],
+    [`Flagged to Validate: ${flaggedItems.length} conflicts and gaps found between the source documents, to be decided by a team lead`, false],
+    [`Macro Library: ${macroLibrary.length} approved message templates, reference wording for the reply assistant and for Gabriel (live promo codes and customer names removed)`, false],
     ["", false],
     ["Not included: the single-use coupon pool (individual codes), and the login passcodes.", false],
   ];
@@ -111,6 +117,21 @@ export async function buildWorkbook(kb: KnowledgeBase, pending: PendingItem[]): 
     ["Target", "Proposed fact", "Why it's waiting", "Conflicts with", "Raw submission", "Submitted by", "Submitted at"],
     pending.map((p) => [p.target, p.proposed_fact, p.reason, p.conflicting_with || "", p.raw_input, p.submitted_by || "", p.created_at]),
     [16, 70, 60, 60, 60, 14, 22]
+  );
+
+  addSheet(
+    wb,
+    "Flagged to Validate",
+    ["#", "Topic", "Proposed resolution", "What the sources say", "Why it needs a decision", "Conflicts with"],
+    flaggedItems.map((f, i) => [i + 1, f.topic, f.proposed_fact, f.sources_say, f.reason, f.conflicting_with]),
+    [5, 34, 60, 90, 60, 50]
+  );
+  addSheet(
+    wb,
+    "Macro Library",
+    ["#", "Category", "Macro name", "Template text"],
+    macroLibrary.map((m, i) => [i + 1, m.category, m.name, m.text]),
+    [6, 22, 34, 130]
   );
 
   const arr = await wb.xlsx.writeBuffer();

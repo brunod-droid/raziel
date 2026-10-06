@@ -116,6 +116,20 @@ the Reply Assistant, but for the team's own questions rather than drafting a cus
 reply. Useful for "what's our policy on X" type questions without needing a customer
 message to paste in.
 
+## Loading the flagged conflicts into To Validate
+
+While reconciling every source document, 15 conflicts and gaps were found (warranty start date,
+gold purities, late compensation thresholds, DNR refund path, and so on). They are listed in
+`data/toValidate.json` and in the Flagged to Validate tab of the export. To put them in the
+To Validate queue of your site, run `supabase_seed_to_validate.sql` once in the Supabase SQL Editor
+(after `supabase.sql`). It is safe to run again, an item already in the queue is not added twice.
+
+## Macro library
+
+`data/macroLibrary.json` holds the 296 approved message templates (category, name, text), with live
+promo codes and customer names removed. It is not part of the reply assistant's prompt, it is
+reference material that is included in the Excel and JSON export, for the team and for Gabriel.
+
 ## Exporting the whole knowledge base
 
 On the Knowledge Base page (team lead login), the **Export everything** section has two buttons:
