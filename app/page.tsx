@@ -5,6 +5,18 @@ import Link from "next/link";
 
 const CATEGORY_OPTIONS = ["Auto-detect", "Presales", "WISMO / Order status", "Damaged / Defective", "General support"];
 
+// Extensible list of quick-context checkboxes. Add more here over time,
+// each just needs an id, a label, and the note appended to the agent's
+// context when checked, no other wiring needed.
+const QUICK_FLAGS: { id: string; label: string; yesNote: string; noNote: string }[] = [
+  {
+    id: "futureEngraving",
+    label: "Future Engraving on original order?",
+    yesNote: "Confirmed: Future Engraving WAS purchased on this customer's original order.",
+    noNote: "Confirmed: Future Engraving was NOT purchased on this customer's original order.",
+  },
+];
+
 function extractUrls(text: string): string[] {
   if (!text) return [];
   const matches = text.match(/https?:\/\/[^\s)]+/g) || [];
@@ -26,6 +38,8 @@ type Result = {
   reply: string;
   incentive_used: string;
   clarifying_questions: string[];
+  policy_used?: string[];
+  productPageWarning?: string;
 };
 
 type Site = { id: string; name: string; domains: string[] };
@@ -36,13 +50,19 @@ export default function AgentPage() {
   const [message, setMessage] = useState("");
   const [notes, setNotes] = useState("");
   const [category, setCategory] = useState("Auto-detect");
+  const [productUrl, setProductUrl] = useState("");
+  const [flags, setFlags] = useState<Record<string, "yes" | "no" | undefined>>({});
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
   const [replyDraft, setReplyDraft] = useState("");
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
   const [couponMsg, setCouponMsg] = useState("");
+  const [note, setNote] = useState("");
+  const [savingNote, setSavingNote] = useState(false);
+  const [noteMsg, setNoteMsg] = useState("");
   const [claimingCoupon, setClaimingCoupon] = useState(false);
+  const [role, setRole] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/kb")
@@ -52,6 +72,9 @@ export default function AgentPage() {
         setSites(s);
         if (s.length > 0) setSiteId(s[0].id);
       });
+    fetch("/api/me")
+      .then((r) => r.json())
+      .then((data) => setRole(data.role));
   }, []);
 
   const generate = async () => {
@@ -61,10 +84,12 @@ export default function AgentPage() {
     setResult(null);
     setCouponMsg("");
     try {
+      const flagNotes = QUICK_FLAGS.filter((f) => flags[f.id]).map((f) => (flags[f.id] === "yes" ? f.yesNote : f.noNote));
+      const combinedNotes = [notes.trim(), ...flagNotes].filter(Boolean).join("\n");
       const res = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message, notes, category, siteId }),
+        body: JSON.stringify({ message, notes: combinedNotes, category, siteId, productUrl }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -86,6 +111,30 @@ export default function AgentPage() {
       setCopied(true);
       setTimeout(() => setCopied(false), 1800);
     } catch {}
+  };
+
+  const saveNote = async () => {
+    if (!note.trim()) return;
+    setSavingNote(true);
+    setNoteMsg("");
+    try {
+      const res = await fetch("/api/kb/note", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ siteId, note }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setNoteMsg(data.error || "Could not save the note.");
+        return;
+      }
+      setNoteMsg("Saved to the Knowledge Base for next time.");
+      setNote("");
+    } catch {
+      setNoteMsg("Could not save the note, try again.");
+    } finally {
+      setSavingNote(false);
+    }
   };
 
   const claimCode = async () => {
@@ -120,12 +169,15 @@ export default function AgentPage() {
   return (
     <div className="container">
       <header style={{ marginBottom: 28, display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12 }}>
-        <div>
-          <p style={{ color: "var(--amber)", fontSize: 12, letterSpacing: 0.5, margin: 0 }}>{currentSite?.name || "theo grace"}</p>
-          <h1 style={{ fontSize: 24, margin: "4px 0" }}>Holiday Concierge Console</h1>
-          <p style={{ color: "var(--text-muted)", fontSize: 14, maxWidth: 560, margin: 0 }}>
-            Warm, on brand replies for every message that comes in during the season that matters most, with the right gesture attached.
-          </p>
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <img src="/raziel-logo.png" alt="Raziel" style={{ width: 56, height: 56, borderRadius: 8 }} />
+          <div>
+            <p style={{ color: "var(--amber)", fontSize: 12, letterSpacing: 0.5, margin: 0 }}>{currentSite?.name || "theo grace"}</p>
+            <h1 style={{ fontSize: 24, margin: "4px 0" }}>Raziel, the Concierge</h1>
+            <p style={{ color: "var(--text-muted)", fontSize: 14, maxWidth: 560, margin: 0 }}>
+              Warm, on brand replies for every message that comes in, with the right gesture attached.
+            </p>
+          </div>
         </div>
         <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
           {sites.length > 1 && (
@@ -137,6 +189,9 @@ export default function AgentPage() {
               ))}
             </select>
           )}
+          <Link href="/ask" className="btn-ghost" style={{ textDecoration: "none", fontSize: 13 }}>
+            Ask a Question
+          </Link>
           <Link href="/knowledge" className="btn-ghost" style={{ textDecoration: "none", fontSize: 13 }}>
             Knowledge Base
           </Link>
@@ -152,6 +207,46 @@ export default function AgentPage() {
           <div>
             <label className="field-label">Context for the assistant (optional)</label>
             <textarea rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Order #, delay length, customer tone, VIP status..." />
+            <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 8 }}>
+              {QUICK_FLAGS.map((f) => (
+                <div key={f.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, fontSize: 13 }}>
+                  <span>{f.label}</span>
+                  <div style={{ display: "flex", gap: 4 }}>
+                    {["Not asked", "Yes", "No"].map((opt) => {
+                      const val = opt === "Not asked" ? undefined : (opt.toLowerCase() as "yes" | "no");
+                      const active = (flags[f.id] || undefined) === val;
+                      return (
+                        <button
+                          key={opt}
+                          type="button"
+                          onClick={() => setFlags({ ...flags, [f.id]: val })}
+                          className="btn-ghost"
+                          style={{
+                            fontSize: 12,
+                            padding: "4px 10px",
+                            background: active ? "var(--amber)" : "transparent",
+                            color: active ? "#1A1206" : "var(--text-muted)",
+                          }}
+                        >
+                          {opt}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div>
+            <label className="field-label">Product page URL (optional)</label>
+            <input
+              value={productUrl}
+              onChange={(e) => setProductUrl(e.target.value)}
+              placeholder="https://www.theograce.com/products/..."
+            />
+            <p style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4 }}>
+              If the customer is asking about a specific product, paste its link here for accurate price and specs.
+            </p>
           </div>
           <div>
             <label className="field-label">Category</label>
@@ -215,6 +310,7 @@ export default function AgentPage() {
                   <span style={{ color: "var(--amber)" }}>{result.incentive_used}</span>
                 </p>
               )}
+              {result.productPageWarning && <p style={{ fontSize: 12, color: "var(--red)", margin: 0 }}>{result.productPageWarning}</p>}
               <div>
                 <button className="btn-ghost" onClick={claimCode} disabled={claimingCoupon} style={{ fontSize: 13 }}>
                   {claimingCoupon ? "Claiming..." : "Claim a single-use code"}
@@ -229,6 +325,33 @@ export default function AgentPage() {
                       <li key={i}>{q}</li>
                     ))}
                   </ul>
+                </div>
+              )}
+              {result.policy_used && result.policy_used.length > 0 && (
+                <div className="badge" style={{ display: "block", padding: 12 }}>
+                  <div style={{ fontWeight: 600, marginBottom: 6, color: "var(--text-muted)" }}>Policy</div>
+                  <ul style={{ margin: 0, paddingLeft: 18, fontWeight: 400, color: "var(--text)" }}>
+                    {result.policy_used.map((p, i) => (
+                      <li key={i}>{p}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {role === "lead" && (
+                <div style={{ borderTop: "1px solid var(--line)", paddingTop: 12 }}>
+                  <label className="field-label">Save a note for next time (optional)</label>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <input
+                      value={note}
+                      onChange={(e) => setNote(e.target.value)}
+                      placeholder="e.g. this product's real character limit is 9, not 10"
+                      style={{ flex: 1 }}
+                    />
+                    <button className="btn-ghost" onClick={saveNote} disabled={savingNote || !note.trim()} style={{ fontSize: 13, whiteSpace: "nowrap" }}>
+                      {savingNote ? "Saving..." : "Save"}
+                    </button>
+                  </div>
+                  {noteMsg && <p style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4 }}>{noteMsg}</p>}
                 </div>
               )}
             </>

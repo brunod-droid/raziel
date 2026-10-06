@@ -23,10 +23,22 @@ export async function middleware(req: NextRequest) {
   if (pathname.startsWith("/knowledge") && role !== "lead") {
     return NextResponse.redirect(new URL("/", req.url));
   }
-  if (pathname.startsWith("/api/kb") && req.method !== "GET" && role !== "lead") {
+  if (pathname.startsWith("/review") && role !== "lead") {
+    return NextResponse.redirect(new URL("/", req.url));
+  }
+  if (pathname === "/api/kb" && req.method !== "GET" && role !== "lead") {
     return NextResponse.json({ error: "Team lead access required" }, { status: 403 });
   }
   if (pathname.startsWith("/api/coupons/manage") && role !== "lead") {
+    return NextResponse.json({ error: "Team lead access required" }, { status: 403 });
+  }
+  if (pathname === "/api/kb/note" && role !== "lead") {
+    return NextResponse.json({ error: "Team lead access required" }, { status: 403 });
+  }
+  if (pathname.startsWith("/api/kb/export") && role !== "lead") {
+    return NextResponse.json({ error: "Team lead access required" }, { status: 403 });
+  }
+  if (pathname.startsWith("/api/kb/review") && role !== "lead") {
     return NextResponse.json({ error: "Team lead access required" }, { status: 403 });
   }
 

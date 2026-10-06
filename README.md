@@ -46,9 +46,12 @@ database.
 
 1. In your Supabase project, go to the SQL Editor, New query, paste the contents of
    `supabase.sql` from this repo, and run it. This creates the `kv_store` table (holds
-   the shared knowledge base) and the `coupon_pool` table plus a `claim_coupon` function
+   the shared knowledge base), the `coupon_pool` table plus a `claim_coupon` function
    (handles the single-use coupon pool, safely even if two agents claim at the same
-   moment).
+   moment), and `kb_review_queue` (holds knowledge submissions that need a human decision,
+   see section 6 below). If you already ran an older version of this file, just run the
+   whole updated file again, `create table if not exists` won't touch what's already
+   there.
 2. In Supabase, go to Settings, API. Copy the **Project URL** and the **service_role**
    secret key (not the anon/public one, the service_role key is what lets the server
    read and write on behalf of the whole team, and it must never be exposed to the
@@ -90,18 +93,55 @@ like "15% off" or "code XYZ" in short leaf elements), since it doesn't know the 
 exact CSS classes. Team leads can hit "Refresh now" on the Knowledge Base page to trigger
 it manually and sanity check what it finds before trusting it.
 
-## 6. Roles
+## 6. Adding knowledge without editing code
+
+The Knowledge Base page has an "Add knowledge" box. A team lead pastes any new info there
+(a policy, a product detail, anything) and it's checked against everything already
+recorded, using Claude:
+
+- If it's clear and doesn't conflict with anything, it's added automatically to the right
+  site (or to Common if it applies everywhere).
+- If it's ambiguous, or it contradicts something already there, it's sent to a new page,
+  **To Validate** (`/review`), instead of silently overwriting anything. From there a team
+  lead sees the raw submission, why it was flagged, what it conflicts with if anything,
+  and can approve it (editing the target site or wording first if needed) or reject it.
+
+This is meant to be the ongoing way the knowledge base grows day to day, no code changes
+or redeploys needed for new facts.
+
+## 7. Internal questions, not just customer replies
+
+`/ask` is a second, simpler screen: same knowledge base and site-restricted web search as
+the Reply Assistant, but for the team's own questions rather than drafting a customer
+reply. Useful for "what's our policy on X" type questions without needing a customer
+message to paste in.
+
+## Exporting the whole knowledge base
+
+On the Knowledge Base page (team lead login), the **Export everything** section has two buttons:
+
+- **Download Excel**: one workbook with a tab for Common Facts, Common Rules, the assistant's
+  writing and tone rules, Sites (with the live promo banner), Site Facts, Site Promo Codes,
+  Site Rules, and anything still waiting in To Validate.
+- **Download JSON**: the same content as a single JSON file, for developers.
+
+It exports the live version, so anything added through the Add knowledge box, agent notes, or
+direct edits on that page is included. The single-use coupon pool is deliberately not exported.
+The same files are also available directly at `/api/kb/export?format=xlsx` and
+`/api/kb/export?format=json` while logged in as a team lead.
+
+## 8. Roles
 
 Two passcodes, two access levels:
-- **Agent passcode**: can use the Reply Assistant.
-- **Lead passcode**: can also edit the Knowledge Base (`/knowledge`), including promo
-  codes, process rules, and brand facts.
+- **Agent passcode**: can use the Reply Assistant and Ask a Question.
+- **Lead passcode**: can also edit the Knowledge Base (`/knowledge`), use the "Add
+  knowledge" box, resolve the To Validate queue (`/review`), and manage the coupon pool.
 
 This is intentionally simple (no user accounts, just two shared passcodes) to get the team
 using it fast. If you later want individual logins or an audit trail of who changed what,
 that's a natural next step, ask and we can add it.
 
-## 7. Local development
+## 9. Local development
 
 ```
 npm install

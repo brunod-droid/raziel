@@ -15,6 +15,9 @@ export default function KnowledgePage() {
   const [couponStats, setCouponStats] = useState<Record<string, { available: number; claimed: number; total: number }>>({});
   const [couponMsg, setCouponMsg] = useState("");
   const [addingCoupons, setAddingCoupons] = useState(false);
+  const [ingestText, setIngestText] = useState("");
+  const [ingesting, setIngesting] = useState(false);
+  const [ingestResult, setIngestResult] = useState<any>(null);
 
   const load = async () => {
     const data = await (await fetch("/api/kb")).json();
@@ -48,6 +51,33 @@ export default function KnowledgePage() {
     setSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 1800);
+  };
+
+  const submitIngest = async () => {
+    if (!ingestText.trim()) return;
+    setIngesting(true);
+    setIngestResult(null);
+    try {
+      const res = await fetch("/api/kb/ingest", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: ingestText }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setIngestResult({ error: data.error || "Something went wrong." });
+        return;
+      }
+      setIngestResult(data);
+      if (data.autoAdded) {
+        setIngestText("");
+        await load();
+      }
+    } catch (e: any) {
+      setIngestResult({ error: e.message });
+    } finally {
+      setIngesting(false);
+    }
   };
 
   const runScrape = async () => {
@@ -185,17 +215,81 @@ export default function KnowledgePage() {
     <div className="container">
       <header style={{ marginBottom: 24, display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
         <div>
-          <p style={{ color: "var(--amber)", fontSize: 12, margin: 0 }}>theo grace</p>
+          <p style={{ color: "var(--amber)", fontSize: 12, margin: 0 }}>Raziel</p>
           <h1 style={{ fontSize: 24, margin: "4px 0" }}>Knowledge Base</h1>
         </div>
-        <Link href="/" className="btn-ghost" style={{ textDecoration: "none", fontSize: 13 }}>
-          Back to Reply Assistant
-        </Link>
+        <div style={{ display: "flex", gap: 8 }}>
+          <Link href="/review" className="btn-ghost" style={{ textDecoration: "none", fontSize: 13 }}>
+            To Validate
+          </Link>
+          <Link href="/" className="btn-ghost" style={{ textDecoration: "none", fontSize: 13 }}>
+            Back to Reply Assistant
+          </Link>
+        </div>
       </header>
 
       <p style={{ color: "var(--text-muted)", fontSize: 14, maxWidth: 700, marginBottom: 20 }}>
         Common is shared by every site below. Each site also has its own voice, promo codes, facts and coupon pool on top of that shared trunk.
       </p>
+
+      <section style={{ marginBottom: 32 }}>
+        <h2 style={{ fontSize: 16, marginBottom: 8 }}>Export everything</h2>
+        <p style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 0 }}>
+          Downloads the live knowledge base exactly as it is right now, including anything added in the app: common facts and rules, every site, promo codes, the assistant's writing and tone rules, and anything waiting in To Validate.
+        </p>
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+          <a className="btn-primary" href="/api/kb/export?format=xlsx" style={{ textDecoration: "none", display: "inline-block" }}>
+            Download Excel
+          </a>
+          <a className="btn-ghost" href="/api/kb/export?format=json" style={{ textDecoration: "none", display: "inline-block" }}>
+            Download JSON
+          </a>
+        </div>
+      </section>
+
+      <section style={{ marginBottom: 32 }}>
+        <h2 style={{ fontSize: 16, marginBottom: 8 }}>Add knowledge</h2>
+        <p style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 0 }}>
+          Paste any new info, a policy, a product detail, anything. It's checked against everything already recorded. If it's clear and doesn't
+          conflict with anything, it's added automatically. If it's unclear or contradicts something existing, it goes to{" "}
+          <Link href="/review" style={{ color: "var(--amber)" }}>
+            To Validate
+          </Link>{" "}
+          for you to resolve instead of silently overwriting anything.
+        </p>
+        <div className="card" style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <textarea
+            rows={3}
+            value={ingestText}
+            onChange={(e) => setIngestText(e.target.value)}
+            placeholder="Paste new info here..."
+          />
+          <button className="btn-primary" style={{ width: "fit-content" }} onClick={submitIngest} disabled={ingesting || !ingestText.trim()}>
+            {ingesting ? "Checking..." : "Add"}
+          </button>
+          {ingestResult && (
+            <div style={{ fontSize: 13 }}>
+              {ingestResult.error && <p style={{ color: "var(--red)" }}>{ingestResult.error}</p>}
+              {ingestResult.autoAdded && (
+                <p style={{ color: "var(--green)" }}>
+                  Added to <strong>{ingestResult.target}</strong>: {ingestResult.proposed_fact}
+                </p>
+              )}
+              {ingestResult.autoAdded === false && (
+                <p style={{ color: "var(--amber)" }}>
+                  Sent to To Validate ({ingestResult.target}): {ingestResult.reason}
+                  {ingestResult.conflicting_with && (
+                    <>
+                      <br />
+                      Conflicts with: {ingestResult.conflicting_with}
+                    </>
+                  )}
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+      </section>
 
       {/* ---------- COMMON ---------- */}
       <section style={{ marginBottom: 36, paddingBottom: 28, borderBottom: `1px solid var(--line)` }}>

@@ -56,9 +56,10 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <div className="container" style={{ maxWidth: 360, paddingTop: 100 }}>
-      <p style={{ color: "var(--amber)", fontSize: 12, letterSpacing: 0.5, marginBottom: 4 }}>theo grace</p>
-      <h1 style={{ fontSize: 22, marginTop: 0, marginBottom: 20 }}>Holiday Concierge Console</h1>
+    <div className="container" style={{ maxWidth: 360, paddingTop: 80 }}>
+      <img src="/raziel-logo.png" alt="Raziel" style={{ width: 72, height: 72, borderRadius: 10, marginBottom: 16 }} />
+      <p style={{ color: "var(--amber)", fontSize: 12, letterSpacing: 0.5, marginBottom: 4 }}>theo grace group</p>
+      <h1 style={{ fontSize: 22, marginTop: 0, marginBottom: 20 }}>Raziel, the Concierge</h1>
       <Suspense fallback={<p style={{ color: "var(--text-muted)" }}>Loading...</p>}>
         <LoginForm />
       </Suspense>

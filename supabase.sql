@@ -60,3 +60,23 @@ begin
 end;
 $$ language plpgsql;
 
+
+-- Holds knowledge submissions that need a human decision before becoming
+-- part of the live knowledge base, either because they conflict with
+-- something already recorded, or because the ingestion step couldn't
+-- confidently tell which site (or common) they belong to.
+create table if not exists kb_review_queue (
+  id uuid primary key default gen_random_uuid(),
+  target text not null, -- 'common' or a site id, best guess if unclear
+  proposed_fact text not null,
+  raw_input text not null, -- exactly what was submitted, for context
+  reason text not null, -- why this needs review, in plain language
+  conflicting_with text, -- the existing fact it conflicts with, if any
+  status text not null default 'pending' check (status in ('pending', 'approved', 'rejected')),
+  submitted_by text,
+  created_at timestamptz not null default now(),
+  resolved_at timestamptz
+);
+
+create index if not exists kb_review_queue_status_idx on kb_review_queue (status);
+
