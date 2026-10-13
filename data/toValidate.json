@@ -2,10 +2,10 @@
   {
     "topic": "Warranty start date and length",
     "target": "common",
-    "proposed_fact": "The 2 year (24 month) warranty is counted from the ETA.",
-    "sources_say": "Hub damaged policy: 2 years from the ETA. Item Received policy export: descriptions say 'under 24 months since the ETA', but the out of warranty instructions say 'starting from the date of delivery' (more than 730 days / 1095 days since delivery). Add-on warranty pack macros: 2 years from the purchase date. Scratches rule: 21 days from the ETA. A marketplace macro (Ali-Express) says '1-year warranty to all jewelry pieces'.",
-    "reason": "Four different starting points (ETA, delivery date, purchase date) and two different lengths (2 years, 1 year) appear across the sources. This decides whether a claim is in or out of warranty.",
-    "conflicting_with": "Out of warranty rule: 25 to 36 months from the ETA gets 20% off, 36+ months full price."
+    "proposed_fact": "The 2 year warranty is counted from the ETA, for every material since January 22nd 2023 (Warranty Conditions document). The delivery date, purchase date and 1 year wordings are outdated.",
+    "sources_say": "Warranty Conditions document (all MYKA and theo grace sites): warranty starts from the ETA, 2 years for all products since January 22nd 2023, extended only on the first and only reorder, from the new ETA. Still saying otherwise: the Item Received policy export (out of warranty instructions count from the delivery date), the add-on warranty pack macros (2 years from the purchase date), and a marketplace macro that says '1-year warranty'.",
+    "reason": "The new document is explicit about the ETA and the 2 years, so this only needs a confirmation that the older wordings (delivery date, purchase date, 1 year) are outdated and should be corrected in the Notch configuration and the macros.",
+    "conflicting_with": "Item Received configuration and macros that count from the delivery or purchase date, or mention 1 year."
   },
   {
     "topic": "Solid gold purities offered",
@@ -72,12 +72,12 @@
     "conflicting_with": "Lost order and over 100 days rules in the knowledge base."
   },
   {
-    "topic": "Adding an engraving or charm after purchase",
+    "topic": "Adding an engraving or charm after purchase, discounts and the three special products",
     "target": "common",
-    "proposed_fact": "Without Future Engraving or the add-on pack, a post-purchase addition isn't possible, the courtesy is a 30% coupon for a new item with team lead approval.",
-    "sources_say": "Pre-Sale macro Add_Engraving: a unique 20% code from the coupon bank for a new order. FUTURE_ENGRAVING macro: not possible, 30% coupon via the team lead (non-premium, 6 months). Policy documents: the full repurchase cases (Russian Rings, Heritage Multiple Name, Totem 3D Bar) get a 30% code. Add-on warranty pack macros: gold and diamond items can buy a $40 pack for up to 2 additions within 2 years.",
-    "reason": "20% versus 30% for the same situation, and it isn't clear whether the add-on pack (Future Engraving) can be purchased after the original order.",
-    "conflicting_with": "Common fact on post-purchase additions and the theo grace Future Engraving facts."
+    "proposed_fact": "Without Future Engraving, a charm or engraving is added by a discounted reorder: MYKA and theo grace non-premium 70% off, premium 50% off, Oak & Luna 50% and 30%. Coupons of 30% (MYKA) or 20% (Oak & Luna) apply when the item is archived or the maximum is reached.",
+    "sources_say": "Future Engraving document: without Future Engraving, a reorder at a discount (MYKA non-premium 70% off, premium 50%, Oak & Luna 50% and 30%), process written as 'for 50% of the price for non-premium or 30% for premium', and 30% (MYKA) or 20% (Oak & Luna) coupons for archived items or a maximum reached. Earlier instruction for Russian Rings, Heritage Multiple Name and Totem 3D Bar: no partial addition, full repurchase with GRACE30 (30% off). Macros: a unique 20% code, or 30% with team lead approval. Add-on warranty pack macros: $40 for gold and diamond items.",
+    "reason": "The discounts are written two ways in the same document (70% and 50% for MYKA, but '50% of the price' and '30%' in the process, which are the Oak & Luna figures). It is also unclear whether the three products that previously only allowed a full repurchase with GRACE30 can use the discounted reorder, and whether the add-on warranty pack is the same thing as Future Engraving.",
+    "conflicting_with": "Theo grace Future Engraving facts and the Presale adding a bead or charm rule."
   },
   {
     "topic": "Manufacturing issue, misspelling versus customer mistake",
@@ -118,5 +118,37 @@
     "sources_say": "Hub damaged policy: exchange, customer pays or receives store credit for the price difference. Macros Arrived_Damaged, OOS_Offer: pick any other piece with an extra $20 credit on us. Hub Not Satisfied: premium exchange covers up to $20 price difference.",
     "reason": "The $20 amount appears in both damaged and not satisfied macros but only in the Not Satisfied policy.",
     "conflicting_with": "Damaged rules in the knowledge base."
+  },
+  {
+    "topic": "Free gift and the one coupon per order statement",
+    "target": "common",
+    "proposed_fact": "A free gift can be added to an order that used a coupon (Free Gift Eligibility policy), the one coupon, voucher or free gift per order statement applies to coupons and vouchers only.",
+    "sources_say": "Free Gift Eligibility document: a free gift is allowed on an order that used a coupon, eligible when the order was placed within 12 hours before to 72 hours after the campaign. Warranty and FAQ statements: only one coupon, voucher or free gift can be used per order.",
+    "reason": "The two statements can't both be true as worded.",
+    "conflicting_with": "Common fact: only one coupon, voucher, or free gift can be used per order."
+  },
+  {
+    "topic": "All methods tracked and insured versus non-tracked shipping",
+    "target": "common",
+    "proposed_fact": "Most shipping methods are tracked and insured, a few methods (for example DHL Royal HU for theo grace UK, and some non-tracked methods) are not.",
+    "sources_say": "Site cart screenshots in the shipping information document: 'All methods are tracked & insured' with USPS, FedEx and DHL. WISMO policies: non-tracked shipping rules, and a non-trackable DHL Royal HU method delivered to theo grace UK.",
+    "reason": "The cart statement and the non-tracked rules contradict each other, so agents may tell a customer there is tracking when there isn't.",
+    "conflicting_with": "WISMO lost order and over 100 days rules (non-tracked shipping)."
+  },
+  {
+    "topic": "Jewelry Protection Plan, benefits and price",
+    "target": "common",
+    "proposed_fact": "Document the current Jewelry Protection Plan benefits and prices per site and per material.",
+    "sources_say": "Warranty Conditions document lists free returns, Refresh Your Style (2 years), Repair and Restore (5 years), Replacements (150 days) and 15% off the next purchase, with prices that differ between the US and Europe and by premium or non-premium. A site screenshot of the 5 year plan ($15) lists free returns, replacement of damaged jewelry (chain and clasp, missing stones, manufacturing issues) and free resizing, and does not mention Refresh Your Style or the 15% discount. Older macros mention an extended 2 year warranty.",
+    "reason": "The benefits on the site don't match the policy document, and the exact prices aren't given.",
+    "conflicting_with": "Warranty conditions rule in the knowledge base."
+  },
+  {
+    "topic": "Return label wording, UK processing and label generator",
+    "target": "common",
+    "proposed_fact": "UK: escalate only after the item is returned. The QR label generator is available in Germany and France only.",
+    "sources_say": "Returning Order document: UK 'escalate only after the item is returned' but also 'QA will process the reorder or refund the moment the customer drops the return'. The label printing section is titled 'for SPING ONLY' then says the option is only available in Germany and France. Premium return instructions 'with PPE' isn't explained.",
+    "reason": "Small inconsistencies in the document that change when a UK return is processed and which countries have the QR label option.",
+    "conflicting_with": "Customer returns and return logistics rule."
   }
 ]
